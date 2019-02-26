@@ -8,11 +8,12 @@ output:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = F, message=FALSE, warning=FALSE,
-                      fig.width = 6, fig.height = 4)
+                      fig.width = 6, fig.height = 3.5)
 
 ```
-
-This documents contains figures for HW showing the convergence of the sequence of functions  
+  
+  
+_This documents contains figures for HW showing the convergence of the sequence of functions_  
 
 ```{r}
 # 2/17/2019
@@ -63,12 +64,13 @@ plot.f(f.29,  N_range =c(1, 2, 3, 4, 5, 20), xaxis_range = c(-5, 5), y2 = 10)
   
 ## 30
 \[f_n(x)=\frac{x}{n^{a} (1+nx^{2})}\]  
-a = 0.1
+If a = 0.1   
 ```{r}
 f.30 <- function(x,n,a = 0.1) x/(n^a*(1 + n*x^2))
 plot.f(f.30,  N_range =c(1, 2, 3, 4, 5, 100), xaxis_range = c(-5, 5))
 ```
-a = 1   
+  
+If a = 1   
 ```{r}
 f.30 <- function(x,n,a = 1) x/(n^a*(1 + n*x^2))
 plot.f(f.30,  N_range =c(1, 2, 3, 4, 5, 100), xaxis_range = c(-5, 5))
@@ -158,5 +160,5 @@ ggplot(data=df, aes(x=x,y=y))  +
 ```
 
 # Code  
-This document is reproducible in R using Rmarkdown, code is host on [my github]()   
+This document is reproducible in R using Rmarkdown, code is host on my github: [(here is the link).](https://github.com/liuyanguu/Math/blob/master/Figures%20showing%20function%20convergence.Rmd)   
 
