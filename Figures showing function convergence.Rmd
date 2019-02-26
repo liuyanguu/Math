@@ -1,0 +1,162 @@
+---
+title: "Figures for HW"
+author: "Yang Liu"
+output:
+  pdf_document:
+    toc: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = F, message=FALSE, warning=FALSE,
+                      fig.width = 6, fig.height = 4)
+
+```
+
+This documents contains figures for HW showing the convergence of the sequence of functions  
+
+```{r}
+# 2/17/2019
+library(ggplot2)
+library(data.table)
+# the plot function
+plot.f <- function(f, 
+                   N_range =c(1, 2, 3, 5, 10), # the range of N in Z+
+                   xaxis_range = c(0, 10), # the x-axis range
+                   y1 = NA, y2 = NA, # the y-axis range
+                   n_points = 500) # how many points for each line
+  {
+  # N in Z+, how many N to show? 
+  # N = c(1:5,10,20,100)
+  if (any(N_range < 1)) stop("Check N range \n")
+  # the x-axis range is default to be between 0, 10, need to change accordingly 
+  if (length(xaxis_range)!=2) stop("Check x axis input \n")
+  x <- seq(from = xaxis_range[1] , to = xaxis_range[2], length.out = n_points)
+  # create a wide table, each N is a column
+  df <- as.data.table(cbind(x, sapply(N_range, f, x = x)))
+  setnames(df, c("x", paste0("n=",N_range))) 
+  df.m1 <- melt(df, measure.vars = paste0("n=",N_range))
+  names(df.m1) <- c("x", "n", "y")
+  df.m1[, n:=as.factor(n)]
+  ggplot(data = df.m1, aes(x=x, y=y, color = n, group = n))  + 
+    geom_line(lwd = 0.8) + 
+    geom_vline(xintercept = 0, color = 'grey') +
+    geom_hline(yintercept = 0, color = 'grey') + 
+    theme_classic() + 
+    scale_color_brewer(palette="BuPu")+
+    # scale_color_grey() +
+    labs(y = 'fn(x)') + 
+    scale_x_continuous(breaks = c(-10, -5, -1, 0, 1, 5,10))+  # x breaks won't go beyond this range I suppose + 
+    scale_y_continuous(limits = c(y1, y2))
+}
+
+```
+# HW4 P159, 26, 29, 30, Prob. C, D  
+Only plot the sequence of functions $f_n(x)$, not the sum.  
+
+## 29
+\[f_n(x)=ne^{-nx}\]
+Notice that when $x = 0$, $f_n(x) = n$  
+```{r}
+f.29 <- function(x,n) n*exp(-n*x)
+plot.f(f.29,  N_range =c(1, 2, 3, 4, 5, 20), xaxis_range = c(-5, 5), y2 = 10)
+```
+  
+## 30
+\[f_n(x)=\frac{x}{n^{a} (1+nx^{2})}\]  
+a = 0.1
+```{r}
+f.30 <- function(x,n,a = 0.1) x/(n^a*(1 + n*x^2))
+plot.f(f.30,  N_range =c(1, 2, 3, 4, 5, 100), xaxis_range = c(-5, 5))
+```
+a = 1   
+```{r}
+f.30 <- function(x,n,a = 1) x/(n^a*(1 + n*x^2))
+plot.f(f.30,  N_range =c(1, 2, 3, 4, 5, 100), xaxis_range = c(-5, 5))
+```
+
+## Prob C
+\[f_n(x) = \frac{cos[(2n-1)x]}{(2n-1)^{2}}\]
+Notice that if $n = 1$, $f_n(x) = cos(x)$  
+```{r}
+f.probC <- function(x,n) {cos((2*n-1)*x) / (2*n-1)^2}
+plot.f(f.probC,  N_range =c(1, 2, 3, 4, 5), xaxis_range = c(-5, 5))
+```
+
+
+# HW3 P149, 9: a, c, d, e, f and Prob.B  
+```{r}
+# functions for HW3 P147. 9, plot those convergent functions 
+f.a <- function(x,n)(x^n)
+f.b <- function(x,n)(n^2*x/((1-x^2)^n))
+f.c <- function(x,n)(n*x/(1+n*x))
+f.d <- function(x,n){n*x/(1+(n*x)^2)}
+f.e <- function(x,n){x*exp(-n*x)}
+f.f <- function(x,n){n*x*exp(-n*x)}
+
+```
+
+## 9.a  
+\[f_n(x)=x^n, x\in(-1,1]\]
+```{r}
+plot.f(f = f.a, xaxis_range = c(-1,1), N_range = c(1:5, 10,20,100))
+```
+  
+## 9.c  
+\[f_n(x)=\frac{nx}{1+nx}, x\in[0, \infty)\]  
+```{r}
+plot.f(f = f.c)
+```
+  
+## 9.d  
+\[f_n(x)=\frac{nx}{1+(nx)^2}, x\in[0, \infty)\]  
+```{r}
+plot.f(f.d)
+```
+  
+## 9.e  
+\[f_n(x)=xe^{-nx}, x\in[0, \infty)\]
+```{r}
+plot.f(f.e)
+```
+  
+## 9.f  
+\[
+f_n(x)=nxe^{-nx}, x\in[0, \infty)
+\]  
+```{r}
+plot.f(f.f)
+```
+  
+
+## Prob. B  
+\[
+f_n(x) = 
+\begin{aligned}
+0   && if & x\in [-1,-\frac{1}{n}]\\
+\frac{n}{2}x+\frac{1}{2} && if& x\in[-\frac{1}{n},\frac{1}{2}]\\
+1 &&if& x\in (\frac{1}{n}, 1]
+\end{aligned}\\
+\]
+```{r}
+# HW3. Prob B
+x = c(-1,-1/2,1/2,1)
+x2 = c(-1,-1/3,1/3,1)
+x3 = c(-1,-1/6,1/6,1)
+y = c(0,0,1,1)
+df <- as.data.frame(cbind(x,x2,x3, y))
+# '#DCEDC8','#42B3D5' ,'#1A237E'
+ggplot(data=df, aes(x=x,y=y))  + 
+  geom_line(lwd = 1, color = '#DCEDC8') + 
+  geom_line(data = df, aes(x = x2, y = y), color = '#42B3D5', lwd = 0.7) + 
+  geom_line(data = df, aes(x = x3, y = y), color = '#1A237E', lwd = 0.4) + 
+  geom_vline(xintercept = 0, color = 'grey') +
+  geom_hline(yintercept = 0, color = 'grey') + 
+  scale_y_continuous(limits = c(0,1.2)) +
+  scale_x_continuous(limits = c(-1.5,1.5), breaks = c(-1,-1/2,1/2,1),labels = c(-1, "-1/n", "1/n", 1))+
+  labs(y = 'fn(x)') + 
+  theme_classic() 
+```
+
+# Code  
+This document is reproducible in R using Rmarkdown, code is host on [my github]()   
+
